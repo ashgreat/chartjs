@@ -50,10 +50,22 @@ HTMLWidgets.widget({
         var ctx = canvas.getContext('2d');
 
         try {
+          // Process data for line charts to ensure no fill
+          var chartData = x.data;
+          if (x.type === 'line' && chartData.datasets) {
+            chartData.datasets.forEach(function(dataset) {
+              dataset.fill = false;
+              // Remove backgroundColor for line charts to prevent any fill
+              if (dataset.backgroundColor === 'transparent') {
+                delete dataset.backgroundColor;
+              }
+            });
+          }
+          
           // Create Chart.js instance
           el.chart = new Chart(ctx, {
             type: x.type,
-            data: x.data,
+            data: chartData,
             options: x.options || {}
           });
 

@@ -154,11 +154,14 @@ convert_data_to_chartjs <- function(data, type, x, y) {
     if (type != "line") {
       dataset_config$backgroundColor <- get_default_colors(length(y_vars))[i]
     } else {
-      # For line charts, use transparent background or point colors
-      dataset_config$backgroundColor <- "transparent"
+      # For line charts, completely omit backgroundColor to prevent any fill
+      # Only set point colors
       dataset_config$pointBackgroundColor <- get_default_colors(length(y_vars))[i]
       dataset_config$pointBorderColor <- get_default_colors(length(y_vars))[i]
       dataset_config$pointRadius <- 3
+      dataset_config$pointHoverRadius <- 5
+      # Ensure no fill
+      dataset_config$fill <- FALSE
     }
     
     dataset_config
@@ -208,8 +211,17 @@ get_default_options <- function(type) {
   if (type == "line") {
     base_options$elements <- list(
       line = list(
-        tension = 0.1
+        tension = 0.1,
+        fill = FALSE
+      ),
+      point = list(
+        radius = 3,
+        hoverRadius = 5
       )
+    )
+    # Explicitly disable filler plugin for line charts
+    base_options$plugins$filler <- list(
+      propagate = FALSE
     )
   }
   
