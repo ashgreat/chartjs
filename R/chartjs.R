@@ -56,14 +56,31 @@ chartjs <- function(data, type = "bar", x = NULL, y = NULL, options = list(),
   )
   
   # Create the htmlwidget
-  htmlwidgets::createWidget(
+  widget <- htmlwidgets::createWidget(
     name = 'chartjs',
     widget_data,
     width = width,
     height = height,
     package = 'chartjs',
-    elementId = elementId
+    elementId = elementId,
+    sizingPolicy = htmlwidgets::sizingPolicy(
+      defaultWidth = 800,
+      defaultHeight = 400,
+      padding = 10,
+      viewer.defaultWidth = 800,
+      viewer.defaultHeight = 400,
+      browser.defaultWidth = 800,
+      browser.defaultHeight = 400,
+      browser.fill = TRUE,
+      viewer.fill = TRUE
+    )
   )
+  
+  # Add debug info
+  message(paste("Creating", type, "chart with", 
+                length(widget_data$data$datasets), "dataset(s)"))
+  
+  widget
 }
 
 #' Convert R data to Chart.js format

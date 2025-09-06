@@ -9,6 +9,13 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function(x) {
+        // Check if Chart.js is available
+        if (typeof Chart === 'undefined') {
+          console.error('Chart.js is not loaded!');
+          el.innerHTML = '<div style="padding: 20px; background: #fee; border: 1px solid #fcc; color: #c33;">Error: Chart.js library not loaded. Please check the package installation.</div>';
+          return;
+        }
+
         // Clear any existing chart
         if (el.chart) {
           el.chart.destroy();
@@ -19,24 +26,39 @@ HTMLWidgets.widget({
 
         // Create canvas element
         var canvas = document.createElement('canvas');
+        
+        // Set canvas size explicitly
+        canvas.width = width || 800;
+        canvas.height = height || 400;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        
         el.appendChild(canvas);
 
-        // Set container size
+        // Set container size and styling
         el.style.width = width ? width + 'px' : '100%';
         el.style.height = height ? height + 'px' : '400px';
+        el.style.position = 'relative';
 
         // Get 2D context
         var ctx = canvas.getContext('2d');
 
-        // Create Chart.js instance
-        el.chart = new Chart(ctx, {
-          type: x.type,
-          data: x.data,
-          options: x.options || {}
-        });
+        try {
+          // Create Chart.js instance
+          el.chart = new Chart(ctx, {
+            type: x.type,
+            data: x.data,
+            options: x.options || {}
+          });
 
-        // Store chart reference for potential updates
-        el.chartData = x;
+          // Store chart reference for potential updates
+          el.chartData = x;
+          
+          console.log('Chart created successfully:', x.type);
+        } catch (error) {
+          console.error('Error creating chart:', error);
+          el.innerHTML = '<div style="padding: 20px; background: #fee; border: 1px solid #fcc; color: #c33;">Error creating chart: ' + error.message + '</div>';
+        }
       },
 
       resize: function(width, height) {
