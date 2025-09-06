@@ -6,8 +6,6 @@ HTMLWidgets.widget({
 
   factory: function(el, width, height) {
 
-    // TODO: define shared variables for this instance
-
     return {
 
       renderValue: function(x) {
@@ -16,16 +14,16 @@ HTMLWidgets.widget({
           el.chart.destroy();
         }
 
-        // Get the canvas element or create one
-        var canvas = el.querySelector('canvas');
-        if (!canvas) {
-          canvas = document.createElement('canvas');
-          el.appendChild(canvas);
-        }
+        // Clear the element
+        el.innerHTML = '';
 
-        // Set canvas dimensions
-        canvas.width = width;
-        canvas.height = height;
+        // Create canvas element
+        var canvas = document.createElement('canvas');
+        el.appendChild(canvas);
+
+        // Set container size
+        el.style.width = width ? width + 'px' : '100%';
+        el.style.height = height ? height + 'px' : '400px';
 
         // Get 2D context
         var ctx = canvas.getContext('2d');

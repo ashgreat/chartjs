@@ -131,7 +131,7 @@ convert_data_to_chartjs <- function(data, type, x, y) {
       backgroundColor = get_default_colors(length(y_vars))[i],
       borderColor = get_default_colors(length(y_vars))[i],
       borderWidth = if (type == "line") 2 else 1,
-      fill = type == "line"
+      fill = FALSE
     )
   })
   
