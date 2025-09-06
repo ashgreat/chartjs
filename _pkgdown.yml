@@ -1,0 +1,58 @@
+url: https://ashgreat.github.io/chart/
+
+template:
+  bootstrap: 5
+
+home:
+  title: "chartjs: Interactive Charts for R"
+  description: >
+    Create interactive charts in R using the Chart.js JavaScript library.
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, tutorials, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fab-github fa-lg
+      href: https://github.com/ashgreat/chart
+
+reference:
+  - title: "Main Functions"
+    desc: "Core functions for creating Chart.js visualizations"
+    contents:
+      - chartjs
+      
+  - title: "Chart Types"
+    desc: "Functions for specific chart types"
+    contents:
+      - starts_with("chartjs_")
+      - -chartjs_proxy
+      - -starts_with("chartjs_update")
+      - -starts_with("chartjs_add")
+      - -starts_with("chartjs_remove")
+      
+  - title: "Shiny Integration"
+    desc: "Functions for using charts in Shiny applications"
+    contents:
+      - chartjsOutput
+      - renderChartjs
+      
+  - title: "Dynamic Updates"
+    desc: "Functions for updating charts dynamically in Shiny"
+    contents:
+      - chartjs_proxy
+      - starts_with("chartjs_update")
+      - starts_with("chartjs_add")
+      - starts_with("chartjs_remove")
+
+articles:
+  - title: "Getting Started"
+    navbar: ~
+    contents:
+      - getting-started
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with

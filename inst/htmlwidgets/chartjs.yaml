@@ -1,0 +1,7 @@
+dependencies:
+  - name: chartjs
+    version: 4.5.0
+    src: htmlwidgets/lib/chartjs
+    script: 
+      - chart.min.js
+    all_files: false

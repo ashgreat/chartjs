@@ -1,0 +1,193 @@
+---
+title: "Getting Started with chartjs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with chartjs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+The `chartjs` package provides R bindings for the Chart.js JavaScript library, allowing you to create interactive charts directly from R. This vignette will walk you through the basics of creating different types of charts.
+
+```{r setup}
+library(chartjs)
+```
+
+## Basic Bar Chart
+
+Let's start with a simple bar chart:
+
+```{r bar_chart}
+# Create sample data
+data <- data.frame(
+  categories = c("Red", "Blue", "Yellow", "Green", "Purple", "Orange"),
+  values = c(12, 19, 3, 5, 2, 3)
+)
+
+# Create bar chart
+chartjs_bar(data, x = "categories", y = "values")
+```
+
+## Line Chart
+
+For time series or continuous data, line charts are ideal:
+
+```{r line_chart}
+# Create sample data
+months <- c("January", "February", "March", "April", "May", "June", "July")
+sales <- c(65, 59, 80, 81, 56, 55, 40)
+expenses <- c(28, 48, 40, 19, 86, 27, 90)
+
+data <- data.frame(
+  month = months,
+  sales = sales,
+  expenses = expenses
+)
+
+# Create line chart with multiple series
+chartjs_line(data, x = "month", y = c("sales", "expenses"))
+```
+
+## Pie Chart
+
+For showing proportions, use pie charts:
+
+```{r pie_chart}
+# Create sample data
+data <- data.frame(
+  browser = c("Chrome", "Firefox", "Safari", "Edge", "Other"),
+  usage = c(55, 25, 10, 7, 3)
+)
+
+# Create pie chart
+chartjs_pie(data, labels = "browser", values = "usage")
+```
+
+## Scatter Plot
+
+For exploring relationships between two variables:
+
+```{r scatter_plot}
+# Create sample data
+set.seed(123)
+n <- 50
+data <- data.frame(
+  height = rnorm(n, 170, 10),
+  weight = rnorm(n, 70, 15)
+)
+
+# Create scatter plot
+chartjs_scatter(data, x = "height", y = "weight")
+```
+
+## Customizing Charts
+
+You can customize charts by passing options:
+
+```{r custom_chart}
+# Custom options
+custom_options <- list(
+  plugins = list(
+    title = list(
+      display = TRUE,
+      text = "Monthly Sales Data"
+    ),
+    legend = list(
+      position = "bottom"
+    )
+  ),
+  scales = list(
+    y = list(
+      beginAtZero = TRUE,
+      title = list(
+        display = TRUE,
+        text = "Sales ($1000s)"
+      )
+    ),
+    x = list(
+      title = list(
+        display = TRUE,
+        text = "Month"
+      )
+    )
+  )
+)
+
+# Create customized bar chart
+chartjs_bar(data, x = "month", y = "sales", options = custom_options)
+```
+
+## Integration with Shiny
+
+The `chartjs` package integrates seamlessly with Shiny applications:
+
+```{r shiny_example, eval=FALSE}
+library(shiny)
+library(chartjs)
+
+ui <- fluidPage(
+  titlePanel("Chart.js in Shiny"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("chart_type", "Chart Type:",
+                  choices = c("Bar" = "bar", "Line" = "line", "Pie" = "pie")),
+      
+      actionButton("update", "Update Chart")
+    ),
+    
+    mainPanel(
+      chartjsOutput("myChart")
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Sample data
+  data <- reactive({
+    data.frame(
+      categories = c("A", "B", "C", "D"),
+      values = sample(10:50, 4)
+    )
+  })
+  
+  # Render chart
+  output$myChart <- renderChartjs({
+    chartjs(data(), type = input$chart_type, x = "categories", y = "values")
+  })
+  
+  # Update chart dynamically
+  observeEvent(input$update, {
+    new_data <- data.frame(
+      categories = c("A", "B", "C", "D"),
+      values = sample(10:50, 4)
+    )
+    
+    chartjs_proxy("myChart") %>%
+      chartjs_update_data(new_data, x = "categories", y = "values")
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+## Next Steps
+
+This vignette covered the basics of using the `chartjs` package. For more advanced features, explore:
+
+- Animation options
+- Plugin system integration  
+- Custom themes and styling
+- Advanced Shiny interactions
+- Real-time data updates
+
+Check out the package documentation for more examples and detailed API reference.

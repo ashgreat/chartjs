@@ -1,0 +1,33 @@
+#' chartjs: Interactive Charts for R Using Chart.js
+#'
+#' Create interactive charts in R using the Chart.js JavaScript library.
+#' Supports all Chart.js chart types including bar, line, scatter, bubble, pie,
+#' doughnut, radar, and polar area charts with full animation and plugin support.
+#' Integrates seamlessly with Shiny applications.
+#'
+#' @section Main functions:
+#' \itemize{
+#'   \item \code{\link{chartjs}}: Main function to create Chart.js visualizations
+#'   \item \code{\link{chartjs_bar}}: Create bar charts
+#'   \item \code{\link{chartjs_line}}: Create line charts
+#'   \item \code{\link{chartjs_scatter}}: Create scatter plots
+#'   \item \code{\link{chartjs_pie}}: Create pie charts
+#'   \item \code{\link{chartjs_doughnut}}: Create doughnut charts
+#'   \item \code{\link{chartjs_radar}}: Create radar charts
+#'   \item \code{\link{chartjs_polar}}: Create polar area charts
+#' }
+#'
+#' @section Shiny integration:
+#' \itemize{
+#'   \item \code{\link{chartjsOutput}}: Output function for Shiny UI
+#'   \item \code{\link{renderChartjs}}: Render function for Shiny server
+#'   \item \code{\link{chartjs_proxy}}: Create proxy object for updates
+#' }
+#'
+#' @docType package
+#' @name chartjs-package
+#' @import htmlwidgets
+#' @importFrom htmltools tags
+#' @importFrom jsonlite toJSON
+#' @importFrom utils modifyList
+NULL
