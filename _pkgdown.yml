@@ -1,4 +1,4 @@
-url: https://ashgreat.github.io/chart/
+url: https://ashgreat.github.io/chartjs/
 
 template:
   bootstrap: 5
@@ -15,7 +15,7 @@ navbar:
   components:
     github:
       icon: fab-github fa-lg
-      href: https://github.com/ashgreat/chart
+      href: https://github.com/ashgreat/chartjs
 
 reference:
   - title: "Main Functions"

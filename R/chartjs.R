@@ -142,14 +142,26 @@ convert_data_to_chartjs <- function(data, type, x, y) {
       }
     }
     
-    list(
+    dataset_config <- list(
       label = col_name,
       data = values,
-      backgroundColor = get_default_colors(length(y_vars))[i],
       borderColor = get_default_colors(length(y_vars))[i],
       borderWidth = if (type == "line") 2 else 1,
       fill = FALSE
     )
+    
+    # Add backgroundColor only for non-line charts
+    if (type != "line") {
+      dataset_config$backgroundColor <- get_default_colors(length(y_vars))[i]
+    } else {
+      # For line charts, use transparent background or point colors
+      dataset_config$backgroundColor <- "transparent"
+      dataset_config$pointBackgroundColor <- get_default_colors(length(y_vars))[i]
+      dataset_config$pointBorderColor <- get_default_colors(length(y_vars))[i]
+      dataset_config$pointRadius <- 3
+    }
+    
+    dataset_config
   })
   
   # For scatter plots, return only the first dataset

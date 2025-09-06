@@ -13,7 +13,7 @@ You can install the development version of chartjs from [GitHub](https://github.
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ashgreat/chart")
+devtools::install_github("ashgreat/chartjs")
 ```
 
 ## Quick Start

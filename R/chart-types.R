@@ -40,10 +40,23 @@ chartjs_bar <- function(data, x = NULL, y = NULL, horizontal = FALSE, ...) {
 #' chartjs_line(data, x = "month", y = "sales")
 #' }
 chartjs_line <- function(data, x = NULL, y = NULL, smooth = TRUE, ...) {
-  options <- list()
-  if (!smooth) {
-    options$elements <- list(line = list(tension = 0))
-  }
+  # Default options for line charts
+  options <- list(
+    elements = list(
+      line = list(
+        tension = if (smooth) 0.1 else 0
+      ),
+      point = list(
+        radius = 3,
+        hoverRadius = 5
+      )
+    ),
+    plugins = list(
+      filler = list(
+        propagate = FALSE
+      )
+    )
+  )
   
   # Merge with user options
   user_options <- list(...)$options %||% list()

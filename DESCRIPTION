@@ -22,5 +22,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-URL: https://github.com/ashgreat/chart
-BugReports: https://github.com/ashgreat/chart/issues
+URL: https://github.com/ashgreat/chartjs
+BugReports: https://github.com/ashgreat/chartjs/issues
