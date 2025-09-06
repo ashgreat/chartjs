@@ -50,23 +50,50 @@ HTMLWidgets.widget({
         var ctx = canvas.getContext('2d');
 
         try {
-          // Process data for line charts to ensure no fill
+          // Process data for line charts to ensure NO FILL AT ALL
           var chartData = x.data;
           if (x.type === 'line' && chartData.datasets) {
             chartData.datasets.forEach(function(dataset) {
+              // AGGRESSIVELY disable all fill options
               dataset.fill = false;
-              // Remove backgroundColor for line charts to prevent any fill
-              if (dataset.backgroundColor === 'transparent') {
-                delete dataset.backgroundColor;
-              }
+              dataset.backgroundColor = 'rgba(0,0,0,0)'; // Completely transparent
+              
+              // Remove any backgroundColor properties that could cause fill
+              delete dataset.backgroundColor;
+              
+              // Ensure line styling only
+              dataset.tension = dataset.tension || 0.1;
+              dataset.borderWidth = dataset.borderWidth || 2;
             });
+          }
+          
+          // Force line chart options to disable fill
+          var chartOptions = x.options || {};
+          if (x.type === 'line') {
+            chartOptions.elements = chartOptions.elements || {};
+            chartOptions.elements.line = chartOptions.elements.line || {};
+            chartOptions.elements.line.fill = false;
+            chartOptions.elements.line.backgroundColor = 'rgba(0,0,0,0)';
+            
+            // Disable filler plugin completely
+            chartOptions.plugins = chartOptions.plugins || {};
+            chartOptions.plugins.filler = {
+              propagate: false
+            };
+            
+            // Override any global defaults that might cause fill
+            if (typeof Chart !== 'undefined' && Chart.defaults) {
+              Chart.defaults.elements = Chart.defaults.elements || {};
+              Chart.defaults.elements.line = Chart.defaults.elements.line || {};
+              Chart.defaults.elements.line.fill = false;
+            }
           }
           
           // Create Chart.js instance
           el.chart = new Chart(ctx, {
             type: x.type,
             data: chartData,
-            options: x.options || {}
+            options: chartOptions
           });
 
           // Store chart reference for potential updates

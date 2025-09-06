@@ -154,14 +154,20 @@ convert_data_to_chartjs <- function(data, type, x, y) {
     if (type != "line") {
       dataset_config$backgroundColor <- get_default_colors(length(y_vars))[i]
     } else {
-      # For line charts, completely omit backgroundColor to prevent any fill
-      # Only set point colors
+      # For line charts, AGGRESSIVELY prevent any area fill
+      # Explicitly remove any backgroundColor properties
+      dataset_config$backgroundColor <- NULL  # Completely remove it
+      
+      # Only set point colors and line properties
       dataset_config$pointBackgroundColor <- get_default_colors(length(y_vars))[i]
       dataset_config$pointBorderColor <- get_default_colors(length(y_vars))[i]
       dataset_config$pointRadius <- 3
       dataset_config$pointHoverRadius <- 5
-      # Ensure no fill
+      
+      # Triple-ensure no fill at any level
       dataset_config$fill <- FALSE
+      dataset_config$showLine <- TRUE  # Ensure line is shown
+      dataset_config$stepped <- FALSE  # No stepped lines
     }
     
     dataset_config
@@ -209,20 +215,34 @@ get_default_options <- function(type) {
   }
   
   if (type == "line") {
+    # AGGRESSIVELY disable all fill behavior for line charts
     base_options$elements <- list(
       line = list(
         tension = 0.1,
-        fill = FALSE
+        fill = FALSE,
+        backgroundColor = NULL  # Remove any default background
       ),
       point = list(
         radius = 3,
         hoverRadius = 5
       )
     )
-    # Explicitly disable filler plugin for line charts
+    
+    # Multiple approaches to disable fill
     base_options$plugins$filler <- list(
       propagate = FALSE
     )
+    
+    # Add global override to prevent any fill behavior
+    base_options$datasets <- list(
+      line = list(
+        fill = FALSE,
+        backgroundColor = 'transparent'
+      )
+    )
+    
+    # Ensure interaction doesn't trigger fill
+    base_options$interaction$intersect <- FALSE
   }
   
   base_options
