@@ -9,10 +9,16 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function(x) {
+        // Debug information
+        console.log('chartjs widget renderValue called');
+        console.log('Chart object available:', typeof Chart);
+        console.log('Widget data:', x);
+        
         // Check if Chart.js is available
         if (typeof Chart === 'undefined') {
           console.error('Chart.js is not loaded!');
-          el.innerHTML = '<div style="padding: 20px; background: #fee; border: 1px solid #fcc; color: #c33;">Error: Chart.js library not loaded. Please check the package installation.</div>';
+          console.log('Available global objects:', Object.keys(window));
+          el.innerHTML = '<div style="padding: 20px; background: #fee; border: 1px solid #fcc; color: #c33;">Error: Chart.js library not loaded. Please check the package installation.<br><br>Debug info: Chart object type = ' + typeof Chart + '</div>';
           return;
         }
 
