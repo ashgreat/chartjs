@@ -284,6 +284,8 @@ build_bubble_chart <- function(data, x, y) {
     ))
   }
 
+  names(datasets) <- NULL
+
   list(
     data = list(
       labels = NULL,
