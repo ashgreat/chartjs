@@ -7,5 +7,5 @@ dependencies:
   - name: chartjs-binding
     version: 0.2.0
     src: htmlwidgets
+    script: chartjs.js
     stylesheet: chartjs.css
-    all_files: false
