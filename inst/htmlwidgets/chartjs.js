@@ -1,8 +1,22 @@
 (function() {
-  function ensureChart() {
-    if (typeof Chart === 'undefined') {
-      throw new Error('Chart.js library is not available. Verify that chart.umd.js has been loaded.');
+  function whenChartReady(success, failure, attempts) {
+    var remaining = typeof attempts === 'number' ? attempts : 20;
+
+    if (typeof Chart !== 'undefined') {
+      success();
+      return;
     }
+
+    if (remaining <= 0) {
+      if (typeof failure === 'function') {
+        failure();
+      }
+      return;
+    }
+
+    setTimeout(function() {
+      whenChartReady(success, failure, remaining - 1);
+    }, 50);
   }
 
   function deepMerge(target, source) {
@@ -40,7 +54,6 @@
       }
 
       function buildChart(config) {
-        ensureChart();
         destroyChart();
 
         if (canvas.parentNode !== el) {
@@ -63,12 +76,17 @@
 
       return {
         renderValue: function(x) {
-          try {
-            buildChart(x);
-          } catch (error) {
+          whenChartReady(function() {
+            try {
+              buildChart(x);
+            } catch (error) {
+              destroyChart();
+              el.innerHTML = '<div class="chartjs-error">' + error.message + '</div>';
+            }
+          }, function() {
             destroyChart();
-            el.innerHTML = '<div class="chartjs-error">' + error.message + '</div>';
-          }
+            el.innerHTML = '<div class="chartjs-error">Chart.js library is not available. Verify that chart.umd.js has been loaded.</div>';
+          });
         },
 
         resize: function() {
