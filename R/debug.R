@@ -4,21 +4,22 @@
 #' dependencies and creating a simple test chart.
 #'
 #' @export
+#' @importFrom utils packageDescription
 chartjs_debug <- function() {
   cat("=== chartjs Package Diagnostic ===\n\n")
-  
+
   # Check package installation
   cat("1. Package installation check:\n")
   pkg_info <- packageDescription("chartjs")
   cat(paste("   Version:", pkg_info$Version, "\n"))
   cat(paste("   Built:", pkg_info$Built, "\n\n"))
-  
+
   # Check htmlwidgets
   cat("2. htmlwidgets dependency:\n")
   if (requireNamespace("htmlwidgets", quietly = TRUE)) {
-    cat("   ✓ htmlwidgets is available\n")
+    cat("   htmlwidgets is available\n")
   } else {
-    cat("   ✗ htmlwidgets is NOT available\n")
+    cat("   htmlwidgets is NOT available\n")
     return(invisible())
   }
   
@@ -28,9 +29,9 @@ chartjs_debug <- function() {
   js_path <- system.file("htmlwidgets/chartjs.js", package = "chartjs")
   chartjs_path <- system.file("htmlwidgets/lib/chartjs/chart.min.js", package = "chartjs")
   
-  cat(paste("   YAML config:", ifelse(file.exists(yaml_path), "✓ Found", "✗ Missing"), "\n"))
-  cat(paste("   JS binding:", ifelse(file.exists(js_path), "✓ Found", "✗ Missing"), "\n"))
-  cat(paste("   Chart.js lib:", ifelse(file.exists(chartjs_path), "✓ Found", "✗ Missing"), "\n"))
+  cat(paste("   YAML config:", ifelse(file.exists(yaml_path), "Found", "Missing"), "\n"))
+  cat(paste("   JS binding:", ifelse(file.exists(js_path), "Found", "Missing"), "\n"))
+  cat(paste("   Chart.js lib:", ifelse(file.exists(chartjs_path), "Found", "Missing"), "\n"))
   
   if (file.exists(chartjs_path)) {
     size <- file.size(chartjs_path)
@@ -46,7 +47,7 @@ chartjs_debug <- function() {
   
   tryCatch({
     test_chart <- chartjs_bar(test_data, x = "x", y = "y")
-    cat("   ✓ Test chart created successfully\n")
+    cat("   Test chart created successfully\n")
     
     # Print chart structure
     cat("\n5. Chart structure:\n")
@@ -58,7 +59,7 @@ chartjs_debug <- function() {
     return(test_chart)
     
   }, error = function(e) {
-    cat(paste("   ✗ Error creating test chart:", e$message, "\n"))
+    cat(paste("   Error creating test chart:", e$message, "\n"))
     return(invisible())
   })
 }

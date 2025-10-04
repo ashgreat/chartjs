@@ -1,0 +1,7 @@
+^\.github$
+^_pkgdown\.yml$
+^cran-comments\.md$
+^TROUBLESHOOTING\.md$
+^run_shiny_tests\.R$
+^test_line_chart_shiny\.R$
+^test_shiny_app\.R$
