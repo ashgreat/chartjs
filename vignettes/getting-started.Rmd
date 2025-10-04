@@ -89,11 +89,32 @@ data <- data.frame(
 chartjs_scatter(data, x = "height", y = "weight")
 ```
 
+## Bubble Chart
+
+Add a third dimension with bubble charts by mapping a radius column (and optionally a grouping column):
+
+```{r bubble_chart}
+bubbles <- data.frame(
+  x = c(20, 35, 50, 65),
+  y = c(40, 65, 80, 95),
+  radius = c(10, 14, 18, 12),
+  team = c("A", "A", "B", "B")
+)
+
+chartjs_bubble(bubbles, x = "x", y = "y", radius = "radius", group = "team")
+```
+
+
 ## Customizing Charts
 
 You can customize charts by passing options:
 
 ```{r custom_chart}
+sales_data <- data.frame(
+  month = month.abb[1:6],
+  sales = c(65, 59, 80, 81, 56, 55)
+)
+
 # Custom options
 custom_options <- list(
   plugins = list(
@@ -123,7 +144,7 @@ custom_options <- list(
 )
 
 # Create customized bar chart
-chartjs_bar(data, x = "month", y = "sales", options = custom_options)
+chartjs_bar(sales_data, x = "month", y = "sales", options = custom_options)
 ```
 
 ## Integration with Shiny
@@ -165,15 +186,20 @@ server <- function(input, output, session) {
     chartjs(data(), type = input$chart_type, x = "categories", y = "values")
   })
   
-  # Update chart dynamically
   observeEvent(input$update, {
     new_data <- data.frame(
       categories = c("A", "B", "C", "D"),
       values = sample(10:50, 4)
     )
-    
-    chartjs_proxy("myChart") %>%
-      chartjs_update_data(new_data, x = "categories", y = "values")
+
+    proxy <- chartjs_proxy(
+      "myChart",
+      type = input$chart_type,
+      x = "categories",
+      y = "values"
+    )
+
+    chartjs_update_data(proxy, new_data)
   })
 }
 

@@ -7,9 +7,10 @@
 chartjs_update_options(proxy, options)
 }
 \arguments{
-\item{proxy}{A chartjs_proxy object created with \code{\link{chartjs_proxy}}}
+\item{proxy}{A \code{chartjs_proxy} object created with \link{chartjs_proxy}}
 
-\item{options}{New options for the chart}
+\item{options}{New options for the chart. These will be merged with the
+current chart options on the client.}
 }
 \value{
 The proxy object (for method chaining)

@@ -5,9 +5,9 @@
 \alias{chartjs-package}
 \title{chartjs: Interactive Charts for R Using Chart.js}
 \description{
-Create interactive charts in R using the Chart.js JavaScript library.
-Supports all Chart.js chart types including bar, line, scatter, bubble, pie,
-doughnut, radar, and polar area charts with full animation and plugin support.
+Build responsive Chart.js visualisations directly from R. Supports all
+Chart.js chart types including bar, line, scatter, bubble, pie, doughnut,
+radar, and polar area charts with full animation and plugin support.
 Integrates seamlessly with Shiny applications.
 }
 \section{Main functions}{
@@ -17,6 +17,7 @@ Integrates seamlessly with Shiny applications.
 \item \code{\link{chartjs_bar}}: Create bar charts
 \item \code{\link{chartjs_line}}: Create line charts
 \item \code{\link{chartjs_scatter}}: Create scatter plots
+\item \code{\link{chartjs_bubble}}: Create bubble charts
 \item \code{\link{chartjs_pie}}: Create pie charts
 \item \code{\link{chartjs_doughnut}}: Create doughnut charts
 \item \code{\link{chartjs_radar}}: Create radar charts
@@ -36,12 +37,13 @@ Integrates seamlessly with Shiny applications.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/ashgreat/chart}
-  \item Report bugs at \url{https://github.com/ashgreat/chart/issues}
+  \item \url{https://github.com/ashgreat/chartjs}
+  \item Report bugs at \url{https://github.com/ashgreat/chartjs/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Chart.js R Maintainer \email{maintainer@example.com}
+\strong{Maintainer}: Ashwin Malshe \email{ashwin.malshe@utsa.edu}
 
 }
+\keyword{internal}

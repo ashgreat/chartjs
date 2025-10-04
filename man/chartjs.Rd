@@ -9,7 +9,7 @@ chartjs(
   type = "bar",
   x = NULL,
   y = NULL,
-  options = list(),
+  options = NULL,
   width = NULL,
   height = NULL,
   elementId = NULL
@@ -23,7 +23,8 @@ chartjs(
 
 \item{x}{Character string specifying the column name for x-axis values (labels)}
 
-\item{y}{Character string or vector specifying column name(s) for y-axis values}
+\item{y}{Character string or vector specifying column name(s) for y-axis values.
+For bubble charts provide value and radius columns (e.g. \code{c("y", "r")}).}
 
 \item{options}{List of Chart.js options for customizing the chart}
 
@@ -57,5 +58,13 @@ data <- data.frame(
   costs = c(8, 12, 10, 14, 16, 13)
 )
 chartjs(data, type = "line", x = "month", y = c("sales", "costs"))
+
+# Scatter chart with two series
+data <- data.frame(
+  temperature = c(10, 15, 18, 22, 26),
+  demand = c(100, 140, 170, 220, 260),
+  production = c(120, 150, 185, 210, 240)
+)
+chartjs(data, type = "scatter", x = "temperature", y = c("demand", "production"))
 }
 }

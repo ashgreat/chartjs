@@ -4,7 +4,15 @@
 \alias{chartjs_line}
 \title{Create a line chart}
 \usage{
-chartjs_line(data, x = NULL, y = NULL, smooth = TRUE, ...)
+chartjs_line(
+  data,
+  x = NULL,
+  y = NULL,
+  smooth = TRUE,
+  fill = FALSE,
+  options = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{A data.frame containing the data to visualize}
@@ -15,7 +23,11 @@ chartjs_line(data, x = NULL, y = NULL, smooth = TRUE, ...)
 
 \item{smooth}{Logical, whether to smooth the lines (default: TRUE)}
 
-\item{...}{Additional arguments passed to \code{\link{chartjs}}}
+\item{fill}{Logical, whether to fill the area under the line (default: FALSE)}
+
+\item{options}{Optional Chart.js options to apply on top of line defaults}
+
+\item{...}{Additional arguments passed to \link{chartjs}}
 }
 \value{
 An htmlwidget object containing the line chart

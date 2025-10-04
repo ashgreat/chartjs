@@ -4,3 +4,8 @@ dependencies:
     src: htmlwidgets/lib/chartjs
     script: chart.umd.js
     all_files: false
+  - name: chartjs-binding
+    version: 0.2.0
+    src: htmlwidgets
+    stylesheet: chartjs.css
+    all_files: false

@@ -4,7 +4,7 @@
 \alias{chartjs_radar}
 \title{Create a radar chart}
 \usage{
-chartjs_radar(data, labels = NULL, values = NULL, ...)
+chartjs_radar(data, labels = NULL, values = NULL, options = NULL, ...)
 }
 \arguments{
 \item{data}{A data.frame containing the data to visualize}
@@ -13,7 +13,9 @@ chartjs_radar(data, labels = NULL, values = NULL, ...)
 
 \item{values}{Character string or vector specifying column name(s) for values}
 
-\item{...}{Additional arguments passed to \code{\link{chartjs}}}
+\item{options}{Optional Chart.js options to apply on top of radar defaults}
+
+\item{...}{Additional arguments passed to \link{chartjs}}
 }
 \value{
 An htmlwidget object containing the radar chart

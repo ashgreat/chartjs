@@ -4,7 +4,7 @@
 \alias{chartjs_doughnut}
 \title{Create a doughnut chart}
 \usage{
-chartjs_doughnut(data, labels = NULL, values = NULL, ...)
+chartjs_doughnut(data, labels = NULL, values = NULL, options = NULL, ...)
 }
 \arguments{
 \item{data}{A data.frame containing the data to visualize}
@@ -13,7 +13,9 @@ chartjs_doughnut(data, labels = NULL, values = NULL, ...)
 
 \item{values}{Character string specifying the column name for values}
 
-\item{...}{Additional arguments passed to \code{\link{chartjs}}}
+\item{options}{Optional Chart.js options to apply on top of doughnut defaults}
+
+\item{...}{Additional arguments passed to \link{chartjs}}
 }
 \value{
 An htmlwidget object containing the doughnut chart

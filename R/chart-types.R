@@ -4,7 +4,9 @@
 #' @param x Character string specifying the column name for x-axis (categories)
 #' @param y Character string or vector specifying column name(s) for y-axis (values)
 #' @param horizontal Logical, whether to create a horizontal bar chart
-#' @param ... Additional arguments passed to \code{\link{chartjs}}
+#' @param stacked Logical, whether to stack multiple series
+#' @param options Optional Chart.js options to apply on top of bar defaults
+#' @param ... Additional arguments passed to [chartjs]
 #'
 #' @return An htmlwidget object containing the bar chart
 #' @export
@@ -16,9 +18,31 @@
 #' )
 #' chartjs_bar(data, x = "category", y = "values")
 #' }
-chartjs_bar <- function(data, x = NULL, y = NULL, horizontal = FALSE, ...) {
-  type <- if (horizontal) "horizontalBar" else "bar"
-  chartjs(data = data, type = type, x = x, y = y, ...)
+chartjs_bar <- function(data, x = NULL, y = NULL, horizontal = FALSE, stacked = FALSE,
+                        options = NULL, ...) {
+  bar_defaults <- list()
+
+  if (horizontal) {
+    bar_defaults$indexAxis <- "y"
+  }
+
+  if (stacked) {
+    bar_defaults$scales <- list(
+      x = list(stacked = TRUE),
+      y = list(stacked = TRUE)
+    )
+  }
+
+  combined_options <- merge_options(bar_defaults, options)
+
+  chartjs(
+    data = data,
+    type = "bar",
+    x = x,
+    y = y,
+    options = combined_options,
+    ...
+  )
 }
 
 #' Create a line chart
@@ -27,7 +51,9 @@ chartjs_bar <- function(data, x = NULL, y = NULL, horizontal = FALSE, ...) {
 #' @param x Character string specifying the column name for x-axis
 #' @param y Character string or vector specifying column name(s) for y-axis
 #' @param smooth Logical, whether to smooth the lines (default: TRUE)
-#' @param ... Additional arguments passed to \code{\link{chartjs}}
+#' @param fill Logical, whether to fill the area under the line (default: FALSE)
+#' @param options Optional Chart.js options to apply on top of line defaults
+#' @param ... Additional arguments passed to [chartjs]
 #'
 #' @return An htmlwidget object containing the line chart
 #' @export
@@ -39,38 +65,38 @@ chartjs_bar <- function(data, x = NULL, y = NULL, horizontal = FALSE, ...) {
 #' )
 #' chartjs_line(data, x = "month", y = "sales")
 #' }
-chartjs_line <- function(data, x = NULL, y = NULL, smooth = TRUE, ...) {
-  # Default options for line charts
-  options <- list(
+chartjs_line <- function(data, x = NULL, y = NULL, smooth = TRUE, fill = FALSE,
+                         options = NULL, ...) {
+  line_defaults <- list(
     elements = list(
-      line = list(
-        tension = if (smooth) 0.1 else 0
-      ),
-      point = list(
-        radius = 3,
-        hoverRadius = 5
-      )
-    ),
-    plugins = list(
-      filler = list(
-        propagate = FALSE
-      )
+      line = list(tension = if (smooth) 0.4 else 0, fill = fill),
+      point = list(radius = 3, hoverRadius = 5)
     )
   )
-  
-  # Merge with user options
-  user_options <- list(...)$options %||% list()
-  options <- merge_options(options, user_options)
-  
-  chartjs(data = data, type = "line", x = x, y = y, options = options, ...)
+
+  if (fill) {
+    line_defaults$plugins <- list(filler = list(propagate = TRUE))
+  }
+
+  combined_options <- merge_options(line_defaults, options)
+
+  chartjs(
+    data = data,
+    type = "line",
+    x = x,
+    y = y,
+    options = combined_options,
+    ...
+  )
 }
 
 #' Create a scatter plot
 #'
 #' @param data A data.frame containing the data to visualize
 #' @param x Character string specifying the column name for x-axis
-#' @param y Character string specifying the column name for y-axis
-#' @param ... Additional arguments passed to \code{\link{chartjs}}
+#' @param y Character string or vector specifying column name(s) for y-axis
+#' @param options Optional Chart.js options to apply on top of scatter defaults
+#' @param ... Additional arguments passed to [chartjs]
 #'
 #' @return An htmlwidget object containing the scatter plot
 #' @export
@@ -82,8 +108,57 @@ chartjs_line <- function(data, x = NULL, y = NULL, smooth = TRUE, ...) {
 #' )
 #' chartjs_scatter(data, x = "height", y = "weight")
 #' }
-chartjs_scatter <- function(data, x = NULL, y = NULL, ...) {
-  chartjs(data = data, type = "scatter", x = x, y = y, ...)
+chartjs_scatter <- function(data, x = NULL, y = NULL, options = NULL, ...) {
+  chartjs(
+    data = data,
+    type = "scatter",
+    x = x,
+    y = y,
+    options = options,
+    ...
+  )
+}
+
+#' Create a bubble chart
+#'
+#' @param data A data.frame containing the data to visualize
+#' @param x Character string specifying the column name for x-coordinate
+#' @param y Character string specifying the column name for y-coordinate values
+#' @param radius Character string specifying the column for point radius
+#' @param group Optional character string specifying the column to split datasets
+#' @param options Optional Chart.js options to apply on top of bubble defaults
+#' @param ... Additional arguments passed to [chartjs]
+#'
+#' @return An htmlwidget object containing the bubble chart
+#' @export
+#' @examples
+#' \dontrun{
+#' data <- data.frame(
+#'   x = c(20, 30, 40, 50, 60),
+#'   y = c(30, 50, 60, 70, 80),
+#'   r = c(10, 15, 20, 25, 30)
+#' )
+#' chartjs_bubble(data, x = "x", y = "y", radius = "r")
+#' }
+chartjs_bubble <- function(data, x = NULL, y = NULL, radius = NULL, group = NULL,
+                           options = NULL, ...) {
+  if (is.null(radius)) {
+    stop("Bubble charts require the 'radius' argument", call. = FALSE)
+  }
+
+  mapping <- list(value = y, radius = radius)
+  if (!is.null(group)) {
+    mapping$group <- group
+  }
+
+  chartjs(
+    data = data,
+    type = "bubble",
+    x = x,
+    y = mapping,
+    options = options,
+    ...
+  )
 }
 
 #' Create a pie chart
@@ -91,7 +166,8 @@ chartjs_scatter <- function(data, x = NULL, y = NULL, ...) {
 #' @param data A data.frame containing the data to visualize
 #' @param labels Character string specifying the column name for labels
 #' @param values Character string specifying the column name for values
-#' @param ... Additional arguments passed to \code{\link{chartjs}}
+#' @param options Optional Chart.js options to apply on top of pie defaults
+#' @param ... Additional arguments passed to [chartjs]
 #'
 #' @return An htmlwidget object containing the pie chart
 #' @export
@@ -103,8 +179,15 @@ chartjs_scatter <- function(data, x = NULL, y = NULL, ...) {
 #' )
 #' chartjs_pie(data, labels = "category", values = "count")
 #' }
-chartjs_pie <- function(data, labels = NULL, values = NULL, ...) {
-  chartjs(data = data, type = "pie", x = labels, y = values, ...)
+chartjs_pie <- function(data, labels = NULL, values = NULL, options = NULL, ...) {
+  chartjs(
+    data = data,
+    type = "pie",
+    x = labels,
+    y = values,
+    options = options,
+    ...
+  )
 }
 
 #' Create a doughnut chart
@@ -112,7 +195,8 @@ chartjs_pie <- function(data, labels = NULL, values = NULL, ...) {
 #' @param data A data.frame containing the data to visualize
 #' @param labels Character string specifying the column name for labels
 #' @param values Character string specifying the column name for values
-#' @param ... Additional arguments passed to \code{\link{chartjs}}
+#' @param options Optional Chart.js options to apply on top of doughnut defaults
+#' @param ... Additional arguments passed to [chartjs]
 #'
 #' @return An htmlwidget object containing the doughnut chart
 #' @export
@@ -124,8 +208,15 @@ chartjs_pie <- function(data, labels = NULL, values = NULL, ...) {
 #' )
 #' chartjs_doughnut(data, labels = "category", values = "count")
 #' }
-chartjs_doughnut <- function(data, labels = NULL, values = NULL, ...) {
-  chartjs(data = data, type = "doughnut", x = labels, y = values, ...)
+chartjs_doughnut <- function(data, labels = NULL, values = NULL, options = NULL, ...) {
+  chartjs(
+    data = data,
+    type = "doughnut",
+    x = labels,
+    y = values,
+    options = options,
+    ...
+  )
 }
 
 #' Create a radar chart
@@ -133,7 +224,8 @@ chartjs_doughnut <- function(data, labels = NULL, values = NULL, ...) {
 #' @param data A data.frame containing the data to visualize
 #' @param labels Character string specifying the column name for labels (axes)
 #' @param values Character string or vector specifying column name(s) for values
-#' @param ... Additional arguments passed to \code{\link{chartjs}}
+#' @param options Optional Chart.js options to apply on top of radar defaults
+#' @param ... Additional arguments passed to [chartjs]
 #'
 #' @return An htmlwidget object containing the radar chart
 #' @export
@@ -146,8 +238,15 @@ chartjs_doughnut <- function(data, labels = NULL, values = NULL, ...) {
 #' )
 #' chartjs_radar(data, labels = "skill", values = c("person1", "person2"))
 #' }
-chartjs_radar <- function(data, labels = NULL, values = NULL, ...) {
-  chartjs(data = data, type = "radar", x = labels, y = values, ...)
+chartjs_radar <- function(data, labels = NULL, values = NULL, options = NULL, ...) {
+  chartjs(
+    data = data,
+    type = "radar",
+    x = labels,
+    y = values,
+    options = options,
+    ...
+  )
 }
 
 #' Create a polar area chart
@@ -155,7 +254,8 @@ chartjs_radar <- function(data, labels = NULL, values = NULL, ...) {
 #' @param data A data.frame containing the data to visualize
 #' @param labels Character string specifying the column name for labels
 #' @param values Character string specifying the column name for values
-#' @param ... Additional arguments passed to \code{\link{chartjs}}
+#' @param options Optional Chart.js options to apply on top of polar area defaults
+#' @param ... Additional arguments passed to [chartjs]
 #'
 #' @return An htmlwidget object containing the polar area chart
 #' @export
@@ -167,8 +267,15 @@ chartjs_radar <- function(data, labels = NULL, values = NULL, ...) {
 #' )
 #' chartjs_polar(data, labels = "category", values = "value")
 #' }
-chartjs_polar <- function(data, labels = NULL, values = NULL, ...) {
-  chartjs(data = data, type = "polarArea", x = labels, y = values, ...)
+chartjs_polar <- function(data, labels = NULL, values = NULL, options = NULL, ...) {
+  chartjs(
+    data = data,
+    type = "polarArea",
+    x = labels,
+    y = values,
+    options = options,
+    ...
+  )
 }
 
 #' Null-default operator

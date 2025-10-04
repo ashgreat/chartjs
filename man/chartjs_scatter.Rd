@@ -4,16 +4,18 @@
 \alias{chartjs_scatter}
 \title{Create a scatter plot}
 \usage{
-chartjs_scatter(data, x = NULL, y = NULL, ...)
+chartjs_scatter(data, x = NULL, y = NULL, options = NULL, ...)
 }
 \arguments{
 \item{data}{A data.frame containing the data to visualize}
 
 \item{x}{Character string specifying the column name for x-axis}
 
-\item{y}{Character string specifying the column name for y-axis}
+\item{y}{Character string or vector specifying column name(s) for y-axis}
 
-\item{...}{Additional arguments passed to \code{\link{chartjs}}}
+\item{options}{Optional Chart.js options to apply on top of scatter defaults}
+
+\item{...}{Additional arguments passed to \link{chartjs}}
 }
 \value{
 An htmlwidget object containing the scatter plot

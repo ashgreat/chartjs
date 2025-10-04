@@ -1,175 +1,198 @@
-HTMLWidgets.widget({
+(function() {
+  function ensureChart() {
+    if (typeof Chart === 'undefined') {
+      throw new Error('Chart.js library is not available. Verify that chart.umd.js has been loaded.');
+    }
+  }
 
-  name: 'chartjs',
+  function deepMerge(target, source) {
+    if (!source) {
+      return target;
+    }
 
-  type: 'output',
+    Object.keys(source).forEach(function(key) {
+      var value = source[key];
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        target[key] = deepMerge(target[key] || {}, value);
+      } else {
+        target[key] = value;
+      }
+    });
 
-  factory: function(el, width, height) {
+    return target;
+  }
 
-    return {
+  HTMLWidgets.widget({
+    name: 'chartjs',
+    type: 'output',
+    factory: function(el, width, height) {
+      var canvas = document.createElement('canvas');
+      el.appendChild(canvas);
+      el.classList.add('chartjs-widget');
 
-      renderValue: function(x) {
-        // Debug information
-        console.log('chartjs widget renderValue called');
-        console.log('Chart object available:', typeof Chart);
-        console.log('Widget data:', x);
-        
-        // Check if Chart.js is available
-        if (typeof Chart === 'undefined') {
-          console.error('Chart.js is not loaded!');
-          console.log('Available global objects:', Object.keys(window));
-          el.innerHTML = '<div style="padding: 20px; background: #fee; border: 1px solid #fcc; color: #c33;">Error: Chart.js library not loaded. Please check the package installation.<br><br>Debug info: Chart object type = ' + typeof Chart + '</div>';
-          return;
-        }
+      var chart = null;
 
-        // Clear any existing chart
-        if (el.chart) {
-          el.chart.destroy();
-        }
-
-        // Clear the element
-        el.innerHTML = '';
-
-        // Create canvas element
-        var canvas = document.createElement('canvas');
-        
-        // Set canvas size explicitly
-        canvas.width = width || 800;
-        canvas.height = height || 400;
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        
-        el.appendChild(canvas);
-
-        // Set container size and styling
-        el.style.width = width ? width + 'px' : '100%';
-        el.style.height = height ? height + 'px' : '400px';
-        el.style.position = 'relative';
-
-        // Get 2D context
-        var ctx = canvas.getContext('2d');
-
-        try {
-          // Process data for line charts to ensure NO FILL AT ALL
-          var chartData = x.data;
-          if (x.type === 'line' && chartData.datasets) {
-            chartData.datasets.forEach(function(dataset) {
-              // AGGRESSIVELY disable all fill options
-              dataset.fill = false;
-              dataset.backgroundColor = 'rgba(0,0,0,0)'; // Completely transparent
-              
-              // Remove any backgroundColor properties that could cause fill
-              delete dataset.backgroundColor;
-              
-              // Ensure line styling only
-              dataset.tension = dataset.tension || 0.1;
-              dataset.borderWidth = dataset.borderWidth || 2;
-            });
-          }
-          
-          // Force line chart options to disable fill
-          var chartOptions = x.options || {};
-          if (x.type === 'line') {
-            chartOptions.elements = chartOptions.elements || {};
-            chartOptions.elements.line = chartOptions.elements.line || {};
-            chartOptions.elements.line.fill = false;
-            chartOptions.elements.line.backgroundColor = 'rgba(0,0,0,0)';
-            
-            // Disable filler plugin completely
-            chartOptions.plugins = chartOptions.plugins || {};
-            chartOptions.plugins.filler = {
-              propagate: false
-            };
-            
-            // Override any global defaults that might cause fill
-            if (typeof Chart !== 'undefined' && Chart.defaults) {
-              Chart.defaults.elements = Chart.defaults.elements || {};
-              Chart.defaults.elements.line = Chart.defaults.elements.line || {};
-              Chart.defaults.elements.line.fill = false;
-            }
-          }
-          
-          // Create Chart.js instance
-          el.chart = new Chart(ctx, {
-            type: x.type,
-            data: chartData,
-            options: chartOptions
-          });
-
-          // Store chart reference for potential updates
-          el.chartData = x;
-          
-          console.log('Chart created successfully:', x.type);
-        } catch (error) {
-          console.error('Error creating chart:', error);
-          el.innerHTML = '<div style="padding: 20px; background: #fee; border: 1px solid #fcc; color: #c33;">Error creating chart: ' + error.message + '</div>';
-        }
-      },
-
-      resize: function(width, height) {
-        if (el.chart) {
-          el.chart.resize();
-        }
-      },
-
-      // Add methods for Shiny integration
-      getChart: function() {
-        return el.chart;
-      },
-
-      updateData: function(newData) {
-        if (el.chart && newData) {
-          el.chart.data = newData;
-          el.chart.update();
-        }
-      },
-
-      updateOptions: function(newOptions) {
-        if (el.chart && newOptions) {
-          Object.assign(el.chart.options, newOptions);
-          el.chart.update();
+      function destroyChart() {
+        if (chart) {
+          chart.destroy();
+          chart = null;
         }
       }
 
-    };
-  }
-});
+      function buildChart(config) {
+        ensureChart();
+        destroyChart();
 
-// Shiny integration for receiving messages
-if (HTMLWidgets.shinyMode) {
-  
-  Shiny.addCustomMessageHandler('chartjs-update-data', function(message) {
-    var chart = HTMLWidgets.find('#' + message.id);
-    if (chart) {
-      chart.updateData(message.data);
+        if (canvas.parentNode !== el) {
+          el.innerHTML = '';
+          canvas = document.createElement('canvas');
+          el.appendChild(canvas);
+        }
+
+        var ctx = canvas.getContext('2d');
+        chart = new Chart(ctx, {
+          type: config.type,
+          data: config.data,
+          options: config.options || {}
+        });
+
+        el.chartjsMeta = config.meta || null;
+        el.chart = chart;
+        return chart;
+      }
+
+      return {
+        renderValue: function(x) {
+          try {
+            buildChart(x);
+          } catch (error) {
+            destroyChart();
+            el.innerHTML = '<div class="chartjs-error">' + error.message + '</div>';
+          }
+        },
+
+        resize: function() {
+          if (chart) {
+            chart.resize();
+          }
+        },
+
+        getChart: function() {
+          return chart;
+        }
+      };
     }
+  });
+
+  if (!HTMLWidgets.shinyMode) {
+    return;
+  }
+
+  function withWidget(id, callback) {
+    var widget = HTMLWidgets.find('#' + id);
+    if (widget && typeof callback === 'function') {
+      callback(widget);
+    }
+  }
+
+  Shiny.addCustomMessageHandler('chartjs-update-data', function(message) {
+    withWidget(message.id, function(widget) {
+      var chart = widget.getChart && widget.getChart();
+      if (!chart) {
+        return;
+      }
+
+      var element = widget.el || (chart.canvas && chart.canvas.parentElement) || null;
+
+      if (message.meta) {
+        if (element) {
+          element.chartjsMeta = message.meta;
+        }
+        chart.config.type = message.meta.type || chart.config.type;
+      }
+
+      chart.config.data = message.data;
+      chart.update();
+    });
   });
 
   Shiny.addCustomMessageHandler('chartjs-update-options', function(message) {
-    var chart = HTMLWidgets.find('#' + message.id);
-    if (chart) {
-      chart.updateOptions(message.options);
-    }
+    withWidget(message.id, function(widget) {
+      var chart = widget.getChart && widget.getChart();
+      if (!chart || !message.options) {
+        return;
+      }
+
+      chart.options = deepMerge(chart.options || {}, message.options);
+      chart.update();
+    });
   });
 
-  // Event handling - send click events back to Shiny
-  $(document).on('click', '.chartjs canvas', function(e) {
-    var widget = HTMLWidgets.getInstance(this.parentElement);
-    if (widget && widget.getChart) {
-      var chart = widget.getChart();
-      var points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
-      
-      if (points.length) {
-        var point = points[0];
-        var data = {
-          datasetIndex: point.datasetIndex,
-          index: point.index,
-          value: chart.data.datasets[point.datasetIndex].data[point.index],
-          label: chart.data.labels ? chart.data.labels[point.index] : null
-        };
-        
-        Shiny.setInputValue(this.parentElement.id + '_click', data, {priority: 'event'});
+  Shiny.addCustomMessageHandler('chartjs-add-dataset', function(message) {
+    withWidget(message.id, function(widget) {
+      var chart = widget.getChart && widget.getChart();
+      if (!chart || !message.dataset) {
+        return;
       }
-    }
+
+      chart.data.datasets = chart.data.datasets || [];
+      chart.data.datasets.push(message.dataset);
+      chart.update();
+    });
   });
-}
+
+  Shiny.addCustomMessageHandler('chartjs-remove-dataset', function(message) {
+    withWidget(message.id, function(widget) {
+      var chart = widget.getChart && widget.getChart();
+      if (!chart) {
+        return;
+      }
+
+      if (chart.data.datasets && chart.data.datasets.length > message.index) {
+        chart.data.datasets.splice(message.index, 1);
+        chart.update();
+      }
+    });
+  });
+
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest) {
+      return;
+    }
+
+    var canvas = event.target.closest('.chartjs-widget canvas');
+    if (!canvas) {
+      return;
+    }
+
+    var widget = HTMLWidgets.getInstance(canvas.parentElement);
+    if (!widget || !widget.getChart) {
+      return;
+    }
+
+    var chart = widget.getChart();
+    if (!chart) {
+      return;
+    }
+
+    var points = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+    if (!points.length) {
+      return;
+    }
+
+    var point = points[0];
+    var dataset = chart.data.datasets[point.datasetIndex];
+    var value = dataset.data[point.index];
+
+    Shiny.setInputValue(
+      canvas.parentElement.id + '_click',
+      {
+        datasetIndex: point.datasetIndex,
+        index: point.index,
+        value: value,
+        label: chart.data.labels ? chart.data.labels[point.index] : null
+      },
+      { priority: 'event' }
+    );
+  });
+})();

@@ -4,16 +4,13 @@
 \alias{chartjs_add_dataset}
 \title{Add a new dataset to the chart}
 \usage{
-chartjs_add_dataset(proxy, data, label, color = NULL)
+chartjs_add_dataset(proxy, dataset)
 }
 \arguments{
-\item{proxy}{A chartjs_proxy object created with \code{\link{chartjs_proxy}}}
+\item{proxy}{A \code{chartjs_proxy} object created with \link{chartjs_proxy}}
 
-\item{data}{Vector of data values}
-
-\item{label}{Label for the new dataset}
-
-\item{color}{Color for the new dataset (optional)}
+\item{dataset}{A list describing the new dataset. This list should follow the
+Chart.js dataset structure (e.g. contain \code{label}, \code{data}, \code{backgroundColor}).}
 }
 \value{
 The proxy object (for method chaining)

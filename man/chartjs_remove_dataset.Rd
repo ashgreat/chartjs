@@ -7,7 +7,7 @@
 chartjs_remove_dataset(proxy, index)
 }
 \arguments{
-\item{proxy}{A chartjs_proxy object created with \code{\link{chartjs_proxy}}}
+\item{proxy}{A \code{chartjs_proxy} object created with \link{chartjs_proxy}}
 
 \item{index}{Index of the dataset to remove (0-based)}
 }

@@ -1,21 +1,20 @@
 Package: chartjs
 Title: Interactive Charts for R Using Chart.js
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
-    person("Chart.js R", "Maintainer", , "maintainer@example.com", role = c("aut", "cre"))
-Description: Create interactive charts in R using the Chart.js JavaScript library. 
-    Supports all Chart.js chart types including bar, line, scatter, bubble, pie, 
-    doughnut, radar, and polar area charts with full animation and plugin support. 
-    Integrates seamlessly with Shiny applications.
+    person("Ashwin", "Malshe", email = "ashwin.malshe@utsa.edu", role = c("aut", "cre"))
+Description: Build responsive, accessible Chart.js visualisations directly from
+    R. The package wraps the Chart.js v4 renderer with a modern R API including
+    type-specific helpers, sensible defaults, Shiny proxy utilities, and
+    first-class support for custom options. Generate bar, line, scatter, bubble,
+    radar, pie, doughnut, and polar area charts without writing JavaScript and
+    integrate them in R Markdown, Shiny, or htmlwidgets workflows.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
-    htmlwidgets (>= 1.5.4),
-    htmltools,
-    jsonlite,
-    magrittr
+    htmlwidgets
 Suggests:
     shiny,
     testthat (>= 3.0.0),

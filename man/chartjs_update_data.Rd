@@ -4,16 +4,30 @@
 \alias{chartjs_update_data}
 \title{Update chart data via proxy}
 \usage{
-chartjs_update_data(proxy, data, x = NULL, y = NULL)
+chartjs_update_data(
+  proxy,
+  data,
+  type = NULL,
+  x = NULL,
+  y = NULL,
+  radius = NULL,
+  group = NULL
+)
 }
 \arguments{
-\item{proxy}{A chartjs_proxy object created with \code{\link{chartjs_proxy}}}
+\item{proxy}{A \code{chartjs_proxy} object created with \link{chartjs_proxy}}
 
 \item{data}{New data for the chart (same format as original data)}
 
-\item{x}{Column name for x-axis (optional, uses original if not specified)}
+\item{type}{Optional chart type override}
 
-\item{y}{Column name(s) for y-axis (optional, uses original if not specified)}
+\item{x}{Column name for x-axis (optional, uses existing mapping if not provided)}
+
+\item{y}{Column name(s) for y-axis (optional, uses existing mapping if not provided)}
+
+\item{radius}{Column name for bubble radius (only used when \code{type == "bubble"})}
+
+\item{group}{Column name for bubble grouping (only used when \code{type == "bubble"})}
 }
 \value{
 The proxy object (for method chaining)

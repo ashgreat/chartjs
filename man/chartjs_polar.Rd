@@ -4,7 +4,7 @@
 \alias{chartjs_polar}
 \title{Create a polar area chart}
 \usage{
-chartjs_polar(data, labels = NULL, values = NULL, ...)
+chartjs_polar(data, labels = NULL, values = NULL, options = NULL, ...)
 }
 \arguments{
 \item{data}{A data.frame containing the data to visualize}
@@ -13,7 +13,9 @@ chartjs_polar(data, labels = NULL, values = NULL, ...)
 
 \item{values}{Character string specifying the column name for values}
 
-\item{...}{Additional arguments passed to \code{\link{chartjs}}}
+\item{options}{Optional Chart.js options to apply on top of polar area defaults}
+
+\item{...}{Additional arguments passed to \link{chartjs}}
 }
 \value{
 An htmlwidget object containing the polar area chart

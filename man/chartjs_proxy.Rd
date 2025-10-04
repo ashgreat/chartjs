@@ -4,15 +4,34 @@
 \alias{chartjs_proxy}
 \title{Create a proxy object for Chart.js widget manipulation}
 \usage{
-chartjs_proxy(outputId, session = shiny::getDefaultReactiveDomain())
+chartjs_proxy(
+  outputId,
+  session = shiny::getDefaultReactiveDomain(),
+  type = NULL,
+  x = NULL,
+  y = NULL,
+  radius = NULL,
+  group = NULL
+)
 }
 \arguments{
 \item{outputId}{The output ID of the chart to control}
 
 \item{session}{The Shiny session object (optional, defaults to current session)}
+
+\item{type}{Optional chart type. Providing this (along with mappings) enables
+helpers such as \code{\link[=chartjs_update_data]{chartjs_update_data()}} to rebuild datasets on the server.}
+
+\item{x}{Optional column mapping for the x-axis or labels}
+
+\item{y}{Optional column mapping for values (vector for multi-series charts)}
+
+\item{radius}{Optional column name for bubble chart radii}
+
+\item{group}{Optional column name used to split bubble datasets}
 }
 \value{
-A chartjs_proxy object
+A \code{chartjs_proxy} object
 }
 \description{
 This function creates a proxy object that can be used to update Chart.js
@@ -22,7 +41,13 @@ having to completely re-render the chart.
 \examples{
 \dontrun{
 # In a Shiny server function
-proxy <- chartjs_proxy("myChart")
-proxy \%>\% chartjs_update_data(new_data)
+proxy <- chartjs_proxy(
+  "sales_chart",
+  type = "bar",
+  x = "month",
+  y = c("sales", "forecast")
+)
+
+chartjs_update_data(proxy, new_data_frame)
 }
 }

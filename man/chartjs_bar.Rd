@@ -4,7 +4,15 @@
 \alias{chartjs_bar}
 \title{Create a bar chart}
 \usage{
-chartjs_bar(data, x = NULL, y = NULL, horizontal = FALSE, ...)
+chartjs_bar(
+  data,
+  x = NULL,
+  y = NULL,
+  horizontal = FALSE,
+  stacked = FALSE,
+  options = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{A data.frame containing the data to visualize}
@@ -15,7 +23,11 @@ chartjs_bar(data, x = NULL, y = NULL, horizontal = FALSE, ...)
 
 \item{horizontal}{Logical, whether to create a horizontal bar chart}
 
-\item{...}{Additional arguments passed to \code{\link{chartjs}}}
+\item{stacked}{Logical, whether to stack multiple series}
+
+\item{options}{Optional Chart.js options to apply on top of bar defaults}
+
+\item{...}{Additional arguments passed to \link{chartjs}}
 }
 \value{
 An htmlwidget object containing the bar chart
